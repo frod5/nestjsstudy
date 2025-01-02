@@ -6,7 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModel } from './posts/entities/posts.entity';
 import { UsersModule } from './users/users.module';
 import { UserModel } from './users/entities/user.entity';
-import { StudentModel, TeacherModel } from "./users/entities/person.entity";
+import { StudentModel, TeacherModel } from './users/entities/person.entity';
+import {
+  AirplaneModel,
+  BookModel,
+  CarModel,
+  ComputerModel,
+  SingleBaseModel,
+} from './users/entities/inheritance.entity';
 
 @Module({
   imports: [
@@ -19,7 +26,17 @@ import { StudentModel, TeacherModel } from "./users/entities/person.entity";
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      entities: [PostModel, UserModel, StudentModel, TeacherModel],
+      entities: [
+        PostModel,
+        UserModel,
+        StudentModel,
+        TeacherModel,
+        BookModel,
+        CarModel,
+        ComputerModel,
+        AirplaneModel,
+        SingleBaseModel,
+      ],
       synchronize: true, // 개발환경에서만 true
     }),
     UsersModule,
