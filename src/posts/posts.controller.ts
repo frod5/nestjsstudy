@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { PostsService } from './posts.service';
 
 /**
@@ -6,7 +6,8 @@ import { PostsService } from './posts.service';
  * nest g resource
  */
 
-interface Post {
+interface PostModel {
+  id: number;
   author: string;
   title: string;
   content: string;
@@ -14,18 +15,52 @@ interface Post {
   commentCount: number;
 }
 
+let posts: PostModel[] = [
+  {
+    id: 1,
+    author: 'kim',
+    title: 'title1',
+    content: 'content1',
+    likeCount: 999,
+    commentCount: 100,
+  },
+  {
+    id: 2,
+    author: 'lee',
+    title: 'title2',
+    content: 'content2',
+    likeCount: 199,
+    commentCount: 120,
+  },
+  {
+    id: 3,
+    author: 'park',
+    title: 'title3',
+    content: 'content3',
+    likeCount: 99,
+    commentCount: 10,
+  },
+];
+
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  //1) Get 모든 posts 조회
   @Get()
-  getPost(): Post {
-    return {
-      author: 'autor1',
-      title: '제목',
-      content: '내용',
-      likeCount: 100,
-      commentCount: 9999,
-    };
+  getPosts(): PostModel[] {
+    return posts;
+  }
+
+  //2) Get/:id 단 건 조회
+  @Get(':id')
+  getPost(@Param('id') id: string): PostModel {
+    const post = posts.find((post) => post.id === +id);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    return post;
   }
 }
