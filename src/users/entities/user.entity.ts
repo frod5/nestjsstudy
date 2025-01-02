@@ -24,7 +24,35 @@ export class UserModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    //데이터베이스에서 인지하는 컬럼 타입
+    //자동으로 유추됨.
+    type: 'varchar',
+
+    //데이터베이스 컬럼 이름
+    //property 이름으로 자동 유추
+    name: 'title',
+
+    //값의 길이
+    length: 300,
+
+    // null 가능 여부
+    nullable: true,
+
+    // true면 처음 저장할때만 값 지정 가능.
+    update: true,
+
+    // 기본값 true
+    // find()를 실행할 때 기본으로 값을 불러올지
+    select: true,
+
+    // 기본값
+    // 입력이 없을 경우 해당 값으로 지정.
+    default: 'default value',
+
+    // 컬럼중 유일무이한 값이 되어야하는지.
+    unique: false,
+  })
   title: string;
 
   //데이터 생성 일자
