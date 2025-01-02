@@ -11,12 +11,14 @@ export class UsersService {
   ) {}
 
   async findAll() {
-    return this.userRepository.find({
+    /*return this.userRepository.find({
       select: {
         id: true,
         title: true,
       },
-    });
+    });*/
+
+    return this.userRepository.find();
   }
 
   async findOne(id: number) {

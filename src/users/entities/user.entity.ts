@@ -8,6 +8,11 @@ import {
   VersionColumn,
 } from 'typeorm';
 
+export enum Role {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
 @Entity()
 export class UserModel {
   //ID
@@ -70,6 +75,14 @@ export class UserModel {
   // save() 함수가 몇번 불렸는지 기억
   @VersionColumn()
   version: number;
+
+  // enum
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   @Column()
   @Generated('uuid')
