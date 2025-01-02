@@ -3,33 +3,6 @@ import { PostModel } from './entities/posts.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-let posts: PostModel[] = [
-  {
-    id: 1,
-    author: 'kim',
-    title: 'title1',
-    content: 'content1',
-    likeCount: 999,
-    commentCount: 100,
-  },
-  {
-    id: 2,
-    author: 'lee',
-    title: 'title2',
-    content: 'content2',
-    likeCount: 199,
-    commentCount: 120,
-  },
-  {
-    id: 3,
-    author: 'park',
-    title: 'title3',
-    content: 'content3',
-    likeCount: 99,
-    commentCount: 10,
-  },
-];
-
 @Injectable()
 export class PostsService {
   constructor(
@@ -37,12 +10,14 @@ export class PostsService {
     private readonly postsRepository: Repository<PostModel>,
   ) {}
 
-  getAllPosts() {
-    return posts;
+  async getAllPosts() {
+    return this.postsRepository.find();
   }
 
-  getPostById(id: number) {
-    const post = posts.find((post) => post.id === id);
+  async getPostById(id: number) {
+    const post = await this.postsRepository.findOne({
+      where: { id },
+    });
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -51,34 +26,34 @@ export class PostsService {
     return post;
   }
 
-  createPost(author: string, title: string, content: string) {
-    const post: PostModel = {
-      id: posts[posts.length - 1].id + 1,
-      author: author,
-      title: title,
-      content: content,
+  async createPost(author: string, title: string, content: string) {
+    //1) create - 객체 생성
+    //2) save - 객체 저장
+    const post = this.postsRepository.create({
+      author,
+      title,
+      content,
       likeCount: 0,
       commentCount: 0,
-    };
-    posts = [...posts, post];
-    return post;
+    });
+
+    return await this.postsRepository.save(post);
   }
 
-  updatePost(id: number, author: string, title: string, content: string) {
-    const post = posts.find((post) => post.id === id);
-    if (!post) {
-      throw new NotFoundException();
-    }
+  async updatePost(id: number, author: string, title: string, content: string) {
+    // save의 기능
+    // 1) 만약에 데이터가 존재하지 않는다면 (id 기준으로) 새로 생성한다.
+    // 2) 만약에 데이터가 존재한다면 (같은 id의 값이 존재한다면) 존재하던 값을 업데이트한다.
+    const post = await this.getPostById(id);
 
     if (author) post.author = author;
     if (title) post.title = title;
     if (content) post.content = content;
-    posts = posts.map((prev) => (prev.id === id ? post : prev));
-    return post;
+    return await this.postsRepository.save(post);
   }
 
-  deletePost(id: number) {
-    posts = posts.filter((post) => post.id !== id);
+  async deletePost(id: number) {
+    await this.postsRepository.delete(id);
     return id;
   }
 }
