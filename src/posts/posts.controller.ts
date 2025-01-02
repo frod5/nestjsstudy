@@ -1,12 +1,12 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   NotFoundException,
   Param,
   Post,
-  Put,
-} from '@nestjs/common';
+  Put
+} from "@nestjs/common";
 import { PostsService } from './posts.service';
 
 /**
@@ -109,5 +109,12 @@ export class PostsController {
     if (content) post.content = content;
     posts = posts.map((prev) => (prev.id === +id ? post : prev));
     return post;
+  }
+
+  //5) delete
+  @Delete(':id')
+  deletePost(@Param('id') id: string) {
+    posts = posts.filter((post) => post.id !== +id);
+    return id;
   }
 }
