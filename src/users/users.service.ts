@@ -1,7 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import {
+  Between,
+  Equal,
+  ILike,
+  In, IsNull,
+  LessThan,
+  LessThanOrEqual,
+  Like,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  Repository
+} from "typeorm";
 import { ProfileModel } from './entities/profile.entity';
 import { CarModel } from './entities/inheritance.entity';
 import { TagModel } from './entities/tag.entity';
@@ -62,6 +74,40 @@ export class UsersService {
     return this.userRepository.find({
       relations: {
         cars: true,
+      },
+      where: {
+        // id != 1
+        // id: Not(1),
+
+        // id < 30
+        // id: LessThan(30),
+
+        // id <= 30
+        // id:LessThanOrEqual(30),
+
+        // id > 30
+        // id:MoreThan(30),
+
+        // id >= 30
+        // id: MoreThanOrEqual(30),
+
+        // id = 30
+        // id: Equal(30),
+
+        //유사값
+        // email: Like('%google%'),
+
+        //대,소문자 구분 안하는 유사값
+        // email:ILike('%GOOGLE%'),
+
+        // 사이값
+        // id: Between(20,30),
+
+        // IN
+        // id: In([3, 4, 6]),
+
+        // is null
+        // id: IsNull(),
       },
     });
   }
