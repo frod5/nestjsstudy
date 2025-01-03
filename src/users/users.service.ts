@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { ProfileModel } from './entities/profile.entity';
+import { CarModel } from './entities/inheritance.entity';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +12,8 @@ export class UsersService {
     private readonly userRepository: Repository<UserModel>,
     @InjectRepository(ProfileModel)
     private readonly profileRepository: Repository<ProfileModel>,
+    @InjectRepository(CarModel)
+    private readonly carRepository: Repository<CarModel>,
   ) {}
 
   async findAll() {
@@ -24,6 +27,7 @@ export class UsersService {
     return this.userRepository.find({
       relations: {
         profile: true,
+        cars: true,
       },
     });
   }
@@ -61,6 +65,25 @@ export class UsersService {
     const profile = await this.profileRepository.save({
       profileImg: 'profile.png',
       user,
+    });
+
+    return user;
+  }
+
+  async createUserAndCar() {
+    const user = await this.userRepository.save({
+      email: 'xxx@xxxxx.com',
+      title: 'title2',
+    });
+
+    const car = await this.carRepository.save({
+      brand: 'hyundai',
+      onwer: user,
+    });
+
+    const car2 = await this.carRepository.save({
+      brand: 'BMW',
+      onwer: user,
     });
 
     return user;

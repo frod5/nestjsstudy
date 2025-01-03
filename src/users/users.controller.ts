@@ -34,4 +34,9 @@ export class UsersController {
   createUserAndProfile() {
     return this.usersService.createUserAndProfile();
   }
+
+  @Post('/user/car')
+  createUserAndCar() {
+    return this.usersService.createUserAndCar();
+  }
 }

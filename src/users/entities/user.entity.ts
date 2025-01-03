@@ -2,13 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
+  Generated, OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VersionColumn,
-} from 'typeorm';
+  VersionColumn
+} from "typeorm";
 import { ProfileModel } from './profile.entity';
+import { CarModel } from "./inheritance.entity";
 
 export enum Role {
   USER = 'user',
@@ -95,4 +96,7 @@ export class UserModel {
 
   @OneToOne(() => ProfileModel, (profile) => profile.user)
   profile: ProfileModel;
+
+  @OneToMany(() => CarModel, (car) => car.onwer)
+  cars: CarModel[];
 }
