@@ -15,6 +15,7 @@ import {
   SingleBaseModel,
 } from './users/entities/inheritance.entity';
 import { ProfileModel } from "./users/entities/profile.entity";
+import { TagModel } from "./users/entities/tag.entity";
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ProfileModel } from "./users/entities/profile.entity";
         AirplaneModel,
         SingleBaseModel,
         ProfileModel,
+        TagModel,
       ],
       synchronize: true, // 개발환경에서만 true
     }),

@@ -39,4 +39,20 @@ export class UsersController {
   createUserAndCar() {
     return this.usersService.createUserAndCar();
   }
+
+  @Post('/tags/cars')
+  createTagAndCar() {
+    return this.usersService.createTagAndCar();
+  }
+
+  @Get('/user/cars')
+  getCars() {
+    // return 'test';
+    return this.usersService.getAllCars();
+  }
+
+  @Get('/user/tags')
+  getTags() {
+    return this.usersService.getAllTags();
+  }
 }

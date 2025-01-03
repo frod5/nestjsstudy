@@ -2,13 +2,15 @@ import {
   ChildEntity,
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   TableInheritance,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
 import { UserModel } from './user.entity';
+import { TagModel } from './tag.entity';
 
 export class BaseModel {
   @PrimaryGeneratedColumn()
@@ -34,6 +36,10 @@ export class CarModel extends BaseModel {
 
   @ManyToOne(() => UserModel, (user) => user.cars)
   onwer: UserModel;
+
+  @ManyToMany(() => TagModel, (tag) => tag.cars)
+  @JoinTable()
+  tags: TagModel[];
 }
 
 @Entity()

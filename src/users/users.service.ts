@@ -4,6 +4,7 @@ import { UserModel } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { ProfileModel } from './entities/profile.entity';
 import { CarModel } from './entities/inheritance.entity';
+import { TagModel } from './entities/tag.entity';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,8 @@ export class UsersService {
     private readonly profileRepository: Repository<ProfileModel>,
     @InjectRepository(CarModel)
     private readonly carRepository: Repository<CarModel>,
+    @InjectRepository(TagModel)
+    private readonly tagRepository: Repository<TagModel>,
   ) {}
 
   async findAll() {
@@ -87,5 +90,46 @@ export class UsersService {
     });
 
     return user;
+  }
+
+  async createTagAndCar() {
+    const car = await this.carRepository.save({
+      brand: 'hyundai1',
+    });
+
+    const car2 = await this.carRepository.save({
+      brand: 'hyundai2',
+    });
+
+    const tag1 = await this.tagRepository.save({
+      name: 'tag1',
+      cars: [car, car2],
+    });
+
+    const tag2 = await this.tagRepository.save({
+      name: 'tag2',
+      cars: [car2],
+    });
+
+    const car3 = await this.carRepository.save({
+      brand: 'hyundai3',
+      tags: [tag1, tag2],
+    });
+  }
+
+  async getAllCars() {
+    return await this.carRepository.find({
+      relations: {
+        tags: true,
+      },
+    });
+  }
+
+  async getAllTags() {
+    return await this.tagRepository.find({
+      relations: {
+        cars: true,
+      },
+    });
   }
 }

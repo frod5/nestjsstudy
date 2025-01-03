@@ -12,6 +12,7 @@ import {
   SingleBaseModel,
 } from './entities/inheritance.entity';
 import { ProfileModel } from "./entities/profile.entity";
+import { TagModel } from "./entities/tag.entity";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ProfileModel } from "./entities/profile.entity";
       AirplaneModel,
       SingleBaseModel,
       ProfileModel,
+      TagModel,
     ]),
   ],
   controllers: [UsersController],
