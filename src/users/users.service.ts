@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { ProfileModel } from './entities/profile.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserModel)
     private readonly userRepository: Repository<UserModel>,
+    @InjectRepository(ProfileModel)
+    private readonly profileRepository: Repository<ProfileModel>,
   ) {}
 
   async findAll() {
@@ -18,7 +21,11 @@ export class UsersService {
       },
     });*/
 
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: {
+        profile: true,
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -43,5 +50,19 @@ export class UsersService {
     const find = await this.findOne(id);
     find.title = title;
     return this.userRepository.save(find);
+  }
+
+  async createUserAndProfile() {
+    const user = await this.userRepository.save({
+      email: 'xxx@naver.com',
+      title: 'title1',
+    });
+
+    const profile = await this.profileRepository.save({
+      profileImg: 'profile.png',
+      user,
+    });
+
+    return user;
   }
 }

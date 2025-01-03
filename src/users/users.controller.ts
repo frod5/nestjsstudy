@@ -29,4 +29,9 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
+
+  @Post('profile')
+  createUserAndProfile() {
+    return this.usersService.createUserAndProfile();
+  }
 }

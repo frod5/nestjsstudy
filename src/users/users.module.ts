@@ -11,6 +11,7 @@ import {
   ComputerModel,
   SingleBaseModel,
 } from './entities/inheritance.entity';
+import { ProfileModel } from "./entities/profile.entity";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import {
       ComputerModel,
       AirplaneModel,
       SingleBaseModel,
+      ProfileModel,
     ]),
   ],
   controllers: [UsersController],
