@@ -5,15 +5,16 @@ import {
   Between,
   Equal,
   ILike,
-  In, IsNull,
+  In,
+  IsNull,
   LessThan,
   LessThanOrEqual,
   Like,
   MoreThan,
   MoreThanOrEqual,
   Not,
-  Repository
-} from "typeorm";
+  Repository,
+} from 'typeorm';
 import { ProfileModel } from './entities/profile.entity';
 import { CarModel } from './entities/inheritance.entity';
 import { TagModel } from './entities/tag.entity';
@@ -78,34 +79,24 @@ export class UsersService {
       where: {
         // id != 1
         // id: Not(1),
-
         // id < 30
         // id: LessThan(30),
-
         // id <= 30
         // id:LessThanOrEqual(30),
-
         // id > 30
         // id:MoreThan(30),
-
         // id >= 30
         // id: MoreThanOrEqual(30),
-
         // id = 30
         // id: Equal(30),
-
         //유사값
         // email: Like('%google%'),
-
         //대,소문자 구분 안하는 유사값
         // email:ILike('%GOOGLE%'),
-
         // 사이값
         // id: Between(20,30),
-
         // IN
         // id: In([3, 4, 6]),
-
         // is null
         // id: IsNull(),
       },
@@ -215,5 +206,76 @@ export class UsersService {
 
   async deleteProfile(id: number) {
     return this.profileRepository.delete(id);
+  }
+
+  async sample() {
+    // 모델에 해당하는 객체 생성 - 저장은 안함.
+    // const user = await this.userRepository.create({
+    //   email: 'xxxx@google.com',
+    // });
+
+    // 저장
+    const user = await this.userRepository.save({
+      email: 'xxxx@google.com',
+    });
+
+    //preload
+    //입력된 값을 기반으로 데이터베이에 있는 데이터를 불러오고,
+    //추가 입력된 값으로 데이터베이스에서 가져온 값들을 대체함.
+    //저장하지는 않음.
+    // const user2 = await this.userRepository.preload({
+    //   id: 1,
+    //   email: 'xxxx@google.com',
+    // });
+
+    //삭제하기
+    // await this.userRepository.delete(1);
+
+    //increment
+    // 조건, 대상 컬럼, 증가량
+    // await this.userRepository.increment(
+    //   {
+    //     id: 1,
+    //   },
+    //   'count',
+    //   2,
+    // );
+
+    //decrement
+    // await this.userRepository.decrement({id:1}, 'count', 1)
+
+    //갯수 카운팅
+    // await this.userRepository.count({
+    //   where: { email: Like('%naver%') },
+    // });
+
+    // sum
+    // await this.userRepository.sum('count', {
+    //   email: 'xxxx@google.com',
+    // });
+
+    //avg
+    // await this.userRepository.average('count', {
+    //   id: LessThan(30),
+    // });
+
+    //min
+    // await this.userRepository.minimum('count', {
+    //   id: LessThan(30),
+    // });
+
+    //max
+    // await this.userRepository.maximum('count', {
+    //   id: LessThan(30),
+    // });
+
+    // const usersAndCount = await this.userRepository.findAndCount({
+    //   where: {
+    //     id: LessThan(30),
+    //   },
+    //   take: 5,
+    // });
+
+    return user;
   }
 }

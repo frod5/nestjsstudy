@@ -60,4 +60,9 @@ export class UsersController {
   deleteProfile(@Param('id') id: string) {
     return this.usersService.deleteProfile(+id);
   }
+
+  @Post('sample')
+  sample() {
+    return this.usersService.sample();
+  }
 }

@@ -116,4 +116,9 @@ export class UserModel {
 
   @OneToMany(() => CarModel, (car) => car.onwer)
   cars: CarModel[];
+
+  @Column({
+    default: 0,
+  })
+  count: number;
 }
