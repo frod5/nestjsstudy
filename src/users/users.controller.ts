@@ -55,4 +55,9 @@ export class UsersController {
   getTags() {
     return this.usersService.getAllTags();
   }
+
+  @Delete('profile/:id')
+  deleteProfile(@Param('id') id: string) {
+    return this.usersService.deleteProfile(+id);
+  }
 }

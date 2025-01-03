@@ -2,14 +2,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated, OneToMany,
+  Generated,
+  JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VersionColumn
-} from "typeorm";
+  VersionColumn,
+} from 'typeorm';
 import { ProfileModel } from './profile.entity';
-import { CarModel } from "./inheritance.entity";
+import { CarModel } from './inheritance.entity';
 
 export enum Role {
   USER = 'user',
@@ -94,7 +96,22 @@ export class UserModel {
   @Generated('uuid')
   additionalId: string;
 
-  @OneToOne(() => ProfileModel, (profile) => profile.user)
+  @OneToOne(() => ProfileModel, (profile) => profile.user, {
+    //find() 할때 항상 가져옴.
+    eager: true,
+    // 저장할때 한번에 저장가능.
+    cascade: true,
+    // 널 가능 여부
+    nullable: true,
+    //관계가 삭제 됐을때
+    // no action -> 아무것도 하지 않음
+    // cascade -> 참조하는 row도 삭제
+    // set null -> 참조하는 row 참조 Id 를 null로 변경
+    // set default -> 기본 세팅으로 설정
+    // restrict -> 참조하고 있는 row가 있는 경우 참조 당하는 row 삭제 불가
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
   profile: ProfileModel;
 
   @OneToMany(() => CarModel, (car) => car.onwer)

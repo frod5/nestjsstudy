@@ -29,7 +29,6 @@ export class UsersService {
 
     return this.userRepository.find({
       relations: {
-        profile: true,
         cars: true,
       },
     });
@@ -63,12 +62,15 @@ export class UsersService {
     const user = await this.userRepository.save({
       email: 'xxx@naver.com',
       title: 'title1',
+      profile: {
+        profileImg: 'teasd.png',
+      },
     });
 
-    const profile = await this.profileRepository.save({
-      profileImg: 'profile.png',
-      user,
-    });
+    // const profile = await this.profileRepository.save({
+    //   profileImg: 'profile.png',
+    //   user,
+    // });
 
     return user;
   }
@@ -131,5 +133,9 @@ export class UsersService {
         cars: true,
       },
     });
+  }
+
+  async deleteProfile(id: number) {
+    return this.profileRepository.delete(id);
   }
 }
