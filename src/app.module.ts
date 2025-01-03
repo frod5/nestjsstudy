@@ -4,18 +4,18 @@ import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModel } from './posts/entities/posts.entity';
-import { UsersModule } from './users/users.module';
-import { UserModel } from './users/entities/user.entity';
-import { StudentModel, TeacherModel } from './users/entities/person.entity';
+import { StudyModule } from './study/study.module';
+import { UserStudyModel } from './study/entities/user.entity';
+import { StudentModel, TeacherModel } from './study/entities/person.entity';
 import {
   AirplaneModel,
   BookModel,
   CarModel,
   ComputerModel,
   SingleBaseModel,
-} from './users/entities/inheritance.entity';
-import { ProfileModel } from "./users/entities/profile.entity";
-import { TagModel } from "./users/entities/tag.entity";
+} from './study/entities/inheritance.entity';
+import { ProfileModel } from "./study/entities/profile.entity";
+import { TagModel } from "./study/entities/tag.entity";
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { TagModel } from "./users/entities/tag.entity";
       database: 'postgres',
       entities: [
         PostModel,
-        UserModel,
+        UserStudyModel,
         StudentModel,
         TeacherModel,
         BookModel,
@@ -43,7 +43,7 @@ import { TagModel } from "./users/entities/tag.entity";
       ],
       synchronize: true, // 개발환경에서만 true
     }),
-    UsersModule,
+    StudyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

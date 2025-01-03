@@ -9,7 +9,7 @@ import {
   TableInheritance,
   UpdateDateColumn
 } from "typeorm";
-import { UserModel } from './user.entity';
+import { UserStudyModel } from './user.entity';
 import { TagModel } from './tag.entity';
 
 export class BaseModel {
@@ -34,8 +34,8 @@ export class CarModel extends BaseModel {
   @Column()
   brand: string;
 
-  @ManyToOne(() => UserModel, (user) => user.cars)
-  onwer: UserModel;
+  @ManyToOne(() => UserStudyModel, (user) => user.cars)
+  onwer: UserStudyModel;
 
   @ManyToMany(() => TagModel, (tag) => tag.cars)
   @JoinTable()

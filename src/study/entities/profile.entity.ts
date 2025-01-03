@@ -5,15 +5,15 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserModel } from './user.entity';
+import { UserStudyModel } from './user.entity';
 
 @Entity()
 export class ProfileModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => UserModel, (user) => user.profile)
-  user: UserModel;
+  @OneToOne(() => UserStudyModel, (user) => user.profile)
+  user: UserStudyModel;
 
   @Column()
   profileImg: string;

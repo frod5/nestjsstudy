@@ -19,7 +19,7 @@ export enum Role {
 }
 
 @Entity()
-export class UserModel {
+export class UserStudyModel {
   //ID
   // 자동으로 ID 생성
   // @PrimaryGeneratedColumn()

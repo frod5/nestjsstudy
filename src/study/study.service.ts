@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserModel } from './entities/user.entity';
+import { UserStudyModel } from './entities/user.entity';
 import {
   Between,
   Equal,
@@ -20,10 +20,10 @@ import { CarModel } from './entities/inheritance.entity';
 import { TagModel } from './entities/tag.entity';
 
 @Injectable()
-export class UsersService {
+export class StudyService {
   constructor(
-    @InjectRepository(UserModel)
-    private readonly userRepository: Repository<UserModel>,
+    @InjectRepository(UserStudyModel)
+    private readonly userRepository: Repository<UserStudyModel>,
     @InjectRepository(ProfileModel)
     private readonly profileRepository: Repository<ProfileModel>,
     @InjectRepository(CarModel)
@@ -117,6 +117,7 @@ export class UsersService {
     return this.userRepository.save(
       this.userRepository.create({
         title,
+        email: 'xxxx@naver.com',
       }),
     );
   }

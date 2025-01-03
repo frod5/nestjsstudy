@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
-import { UserModel } from './entities/user.entity';
+import { StudyService } from './study.service';
+import { StudyController } from './study.controller';
+import { UserStudyModel } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentModel, TeacherModel } from './entities/person.entity';
 import {
@@ -11,13 +11,13 @@ import {
   ComputerModel,
   SingleBaseModel,
 } from './entities/inheritance.entity';
-import { ProfileModel } from "./entities/profile.entity";
-import { TagModel } from "./entities/tag.entity";
+import { ProfileModel } from './entities/profile.entity';
+import { TagModel } from './entities/tag.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      UserModel,
+      UserStudyModel,
       StudentModel,
       TeacherModel,
       BookModel,
@@ -29,7 +29,7 @@ import { TagModel } from "./entities/tag.entity";
       TagModel,
     ]),
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
+  controllers: [StudyController],
+  providers: [StudyService],
 })
-export class UsersModule {}
+export class StudyModule {}
