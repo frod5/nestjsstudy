@@ -14,8 +14,10 @@ import {
   ComputerModel,
   SingleBaseModel,
 } from './study/entities/inheritance.entity';
-import { ProfileModel } from "./study/entities/profile.entity";
-import { TagModel } from "./study/entities/tag.entity";
+import { ProfileModel } from './study/entities/profile.entity';
+import { TagModel } from './study/entities/tag.entity';
+import { UsersModule } from './users/users.module';
+import { UsersModel } from './users/entities/users.entity';
 
 @Module({
   imports: [
@@ -40,10 +42,12 @@ import { TagModel } from "./study/entities/tag.entity";
         SingleBaseModel,
         ProfileModel,
         TagModel,
+        UsersModel,
       ],
       synchronize: true, // 개발환경에서만 true
     }),
     StudyModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
