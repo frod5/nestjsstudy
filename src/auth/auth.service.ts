@@ -73,19 +73,8 @@ export class AuthService {
     };
   }
 
-  /**
-   * 토큰 검증
-   */
-  verifyToken(token: string) {
-    return this.jwtService.verify(token, {
-      secret: JWT_SECRET,
-    });
-  }
-
   rotateToken(token: string, isRefresh: boolean) {
-    const decoded = this.jwtService.verify(token, {
-      secret: JWT_SECRET,
-    });
+    const decoded = this.verifyToken(token);
 
     if (decoded.type !== 'refresh') {
       throw new UnauthorizedException(
@@ -94,6 +83,15 @@ export class AuthService {
     }
 
     return this.createToken({ ...decoded }, isRefresh);
+  }
+
+  /**
+   * 토큰 검증
+   */
+  verifyToken(token: string) {
+    return this.jwtService.verify(token, {
+      secret: JWT_SECRET,
+    });
   }
 
   /**
