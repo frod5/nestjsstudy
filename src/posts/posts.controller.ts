@@ -1,13 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
-import { PostsService } from './posts.service';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query,} from '@nestjs/common';
+import {PostsService} from './posts.service';
 
 /**
  * 모듈 생성 nest-cli
@@ -33,22 +25,21 @@ export class PostsController {
   //3) Post
   @Post()
   postPost(
-    @Body('author') author: string,
+    @Body('authorId') authorId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ) {
-    return this.postsService.createPost(author, title, content);
+    return this.postsService.createPost(authorId, title, content);
   }
 
   //4) Put
   @Put(':id')
   putPost(
     @Param('id') id: string,
-    @Body('author') author?: string,
     @Body('title') title?: string,
     @Body('content') content?: string,
   ) {
-    return this.postsService.updatePost(+id, author, title, content);
+    return this.postsService.updatePost(+id, title, content);
   }
 
   //5) delete
