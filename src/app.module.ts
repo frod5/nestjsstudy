@@ -18,6 +18,7 @@ import { ProfileModel } from './study/entities/profile.entity';
 import { TagModel } from './study/entities/tag.entity';
 import { UsersModule } from './users/users.module';
 import { UsersModel } from './users/entities/users.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { UsersModel } from './users/entities/users.entity';
     }),
     StudyModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
