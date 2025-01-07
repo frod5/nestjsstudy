@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put,} from '@nestjs/common';
+import {Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Put,} from '@nestjs/common';
 import {PostsService} from './posts.service';
 
 /**
@@ -38,6 +38,7 @@ export class PostsController {
     @Param('id', ParseIntPipe) id: number,
     @Body('title') title?: string,
     @Body('content') content?: string,
+    @Body('isPublic', new DefaultValuePipe(true)) isPublic: boolean,  // new 로 인스턴스화 하면 계속 객체생성됨.
   ) {
     return this.postsService.updatePost(id, title, content);
   }
