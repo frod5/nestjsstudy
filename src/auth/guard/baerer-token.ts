@@ -23,7 +23,7 @@ export class BaererTokenGuard implements CanActivate {
 
     const token = this.authService.extractTokenFromHeader(rawToken, true);
     const result = await this.authService.verifyToken(token);
-    const user = this.usersService.getUserByEmail(result.email);
+    const user = await this.usersService.getUserByEmail(result.email);
 
     /**
      * 1) 사용자 정보 - user
@@ -44,7 +44,7 @@ export class AccessTokenGuard extends BaererTokenGuard {
     await super.canActivate(context);
 
     const req = context.switchToHttp().getRequest();
-    if(req.tokenType !== 'access') {
+    if (req.tokenType !== 'access') {
       throw new UnauthorizedException('Access token이 아닙니다.');
     }
 
@@ -58,7 +58,7 @@ export class RefreshTokenGuard extends BaererTokenGuard {
     await super.canActivate(context);
 
     const req = context.switchToHttp().getRequest();
-    if(req.tokenType !== 'refresh') {
+    if (req.tokenType !== 'refresh') {
       throw new UnauthorizedException('refresh token이 아닙니다.');
     }
 
