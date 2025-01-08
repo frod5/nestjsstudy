@@ -6,7 +6,7 @@ import { IsEmail, IsString, Length } from 'class-validator';
 import { lengthValidationMessage } from '../../common/validation-message/length-validation.message';
 import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
 import { emailValidationMessage } from '../../common/validation-message/email-validation.message';
-import {Exclude, Expose} from 'class-transformer';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 // @Exclude()
@@ -21,7 +21,7 @@ export class UsersModel extends BaseModel {
   @Length(1, 20, {
     message: lengthValidationMessage,
   })
-  @Expose()
+  // @Expose()
   nickname: string;
 
   @Column({
@@ -57,8 +57,6 @@ export class UsersModel extends BaseModel {
   // get nicknameAndEmail() {
   //   return this.nickname + '/' + this.email;
   // }
-
-
 
   @Column({
     type: 'enum',
