@@ -8,10 +8,13 @@ import {
 } from 'typeorm';
 import { BaseModel } from './entities/base.entity';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
-import { HOST, PROTOCOL } from './const/env.const';
+import { ConfigService } from '@nestjs/config';
+import { ENV_HOST_KEY, ENV_PROTOCOL_KEY } from './const/env-keys.const';
 
 @Injectable()
 export class CommonService {
+  constructor(private readonly configService: ConfigService) {}
+
   pagenate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
@@ -63,7 +66,10 @@ export class CommonService {
     const lastItem =
       count > 0 && count === dto.take ? results[count - 1] : null;
 
-    const nextUrl = lastItem && new URL(`${PROTOCOL}://${HOST}/${path}`);
+    const protocol = this.configService.get<string>(ENV_PROTOCOL_KEY);
+    const host = this.configService.get<string>(ENV_HOST_KEY);
+
+    const nextUrl = lastItem && new URL(`${protocol}://${host}/${path}`);
     if (nextUrl) {
       /**
        * dto의 키값을 루핑하며
