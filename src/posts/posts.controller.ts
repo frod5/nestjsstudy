@@ -6,16 +6,15 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/baerer-token';
-import { UsersModel } from '../users/entities/users.entity';
 import { User } from '../users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 /**
  * 모듈 생성 nest-cli
@@ -41,24 +40,18 @@ export class PostsController {
   //3) Post
   @Post()
   @UseGuards(AccessTokenGuard)
-  postPost(
-    @User('id') userId: number,
-    // @Body('title') title: string,
-    // @Body('content') content: string,
-    @Body() createPostDto: CreatePostDto,
-  ) {
+  postPost(@User('id') userId: number, @Body() createPostDto: CreatePostDto) {
     return this.postsService.createPost(userId, createPostDto);
   }
 
   //4) Put
-  @Put(':id')
-  putPost(
+  @Patch(':id')
+  patchPost(
     @Param('id', ParseIntPipe) id: number,
-    @Body('title') title?: string,
-    @Body('content') content?: string,
+    @Body() updatePostDto: UpdatePostDto,
     @Body('isPublic', new DefaultValuePipe(true)) isPublic?: boolean, // new 로 인스턴스화 하면 계속 객체생성됨.
   ) {
-    return this.postsService.updatePost(id, title, content);
+    return this.postsService.updatePost(id, updatePostDto);
   }
 
   //5) delete

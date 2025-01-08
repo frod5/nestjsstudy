@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UsersModel } from '../../users/entities/users.entity';
 import { BaseModel } from '../../study/entities/inheritance.entity';
 import {IsString} from "class-validator";
+import {stringValidationMessage} from "../../common/validation-message/string-validation.message";
 
 @Entity()
 export class PostModel extends BaseModel {
@@ -12,13 +13,13 @@ export class PostModel extends BaseModel {
 
   @Column()
   @IsString({
-    message: 'title은 string 타입을 입력해야합니다.',
+    message: stringValidationMessage,
   })
   title: string;
 
   @Column()
   @IsString({
-    message: 'content은 string 타입을 입력해야합니다.',
+    message: stringValidationMessage,
   })
   content: string;
 
