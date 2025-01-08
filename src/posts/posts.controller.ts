@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -15,6 +16,7 @@ import { AccessTokenGuard } from '../auth/guard/baerer-token';
 import { User } from '../users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PaginatePostDto } from './dto/paginate-post.dto';
 
 /**
  * 모듈 생성 nest-cli
@@ -27,8 +29,9 @@ export class PostsController {
 
   //1) Get 모든 posts 조회
   @Get()
-  getPosts() {
-    return this.postsService.getAllPosts();
+  getPosts(@Query() query: PaginatePostDto) {
+    // return this.postsService.getAllPosts();
+    return this.postsService.paginatePosts(query);
   }
 
   //2) Get/:id 단 건 조회
@@ -42,6 +45,14 @@ export class PostsController {
   @UseGuards(AccessTokenGuard)
   postPost(@User('id') userId: number, @Body() createPostDto: CreatePostDto) {
     return this.postsService.createPost(userId, createPostDto);
+  }
+
+  //temp
+  @Post('random')
+  @UseGuards(AccessTokenGuard)
+  async postPostsRandom(@User('id') userId: number) {
+    await this.postsService.generatePosts(userId);
+    return true;
   }
 
   //4) Put
