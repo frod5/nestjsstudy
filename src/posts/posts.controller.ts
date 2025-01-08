@@ -8,12 +8,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Request, UseGuards,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import {AccessTokenGuard} from "../auth/guard/baerer-token";
-import {UsersModel} from "../users/entities/users.entity";
-import {User} from "../users/decorator/user.decorator";
+import { AccessTokenGuard } from '../auth/guard/baerer-token';
+import { UsersModel } from '../users/entities/users.entity';
+import { User } from '../users/decorator/user.decorator';
+import { CreatePostDto } from './dto/create-post.dto';
 
 /**
  * 모듈 생성 nest-cli
@@ -41,10 +43,11 @@ export class PostsController {
   @UseGuards(AccessTokenGuard)
   postPost(
     @User('id') userId: number,
-    @Body('title') title: string,
-    @Body('content') content: string,
+    // @Body('title') title: string,
+    // @Body('content') content: string,
+    @Body() createPostDto: CreatePostDto,
   ) {
-    return this.postsService.createPost(userId, title, content);
+    return this.postsService.createPost(userId, createPostDto);
   }
 
   //4) Put
