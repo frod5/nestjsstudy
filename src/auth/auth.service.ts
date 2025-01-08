@@ -74,7 +74,9 @@ export class AuthService {
   }
 
   rotateToken(token: string, isRefresh: boolean) {
-    const decoded = this.verifyToken(token);
+    const decoded = this.jwtService.verify(token, {
+      secret: JWT_SECRET,
+    });
 
     if (decoded.type !== 'refresh') {
       throw new UnauthorizedException(
@@ -89,9 +91,15 @@ export class AuthService {
    * 토큰 검증
    */
   verifyToken(token: string) {
-    return this.jwtService.verify(token, {
-      secret: JWT_SECRET,
-    });
+    try {
+      return this.jwtService.verify(token, {
+        secret: JWT_SECRET,
+      });
+    } catch (e) {
+      throw new UnauthorizedException(
+        '토큰이 만료되었거나, 잘못된 토큰입니다.',
+      );
+    }
   }
 
   /**

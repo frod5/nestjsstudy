@@ -12,6 +12,8 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import {AccessTokenGuard} from "../auth/guard/baerer-token";
+import {UsersModel} from "../users/entities/users.entity";
+import {User} from "../users/decorator/user.decorator";
 
 /**
  * 모듈 생성 nest-cli
@@ -38,11 +40,11 @@ export class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   postPost(
-    @Request() req: any,
+    @User('id') userId: number,
     @Body('title') title: string,
     @Body('content') content: string,
   ) {
-    return this.postsService.createPost(req.user.id, title, content);
+    return this.postsService.createPost(userId, title, content);
   }
 
   //4) Put
