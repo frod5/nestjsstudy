@@ -9,14 +9,17 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { AccessTokenGuard } from '../auth/guard/baerer-token';
-import { User } from '../users/decorator/user.decorator';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PaginatePostDto } from './dto/paginate-post.dto';
+import {PostsService} from './posts.service';
+import {AccessTokenGuard} from '../auth/guard/baerer-token';
+import {User} from '../users/decorator/user.decorator';
+import {CreatePostDto} from './dto/create-post.dto';
+import {UpdatePostDto} from './dto/update-post.dto';
+import {PaginatePostDto} from './dto/paginate-post.dto';
+import {FileInterceptor} from "@nestjs/platform-express";
 
 /**
  * 모듈 생성 nest-cli
@@ -43,8 +46,13 @@ export class PostsController {
   //3) Post
   @Post()
   @UseGuards(AccessTokenGuard)
-  postPost(@User('id') userId: number, @Body() createPostDto: CreatePostDto) {
-    return this.postsService.createPost(userId, createPostDto);
+  @UseInterceptors(FileInterceptor('image'))
+  postPost(
+    @User('id') userId: number,
+    @Body() createPostDto: CreatePostDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.postsService.createPost(userId, createPostDto, file?.filename);
   }
 
   //temp

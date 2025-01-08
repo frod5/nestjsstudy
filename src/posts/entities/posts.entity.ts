@@ -1,8 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { UsersModel } from '../../users/entities/users.entity';
 import { BaseModel } from '../../study/entities/inheritance.entity';
-import {IsString} from "class-validator";
-import {stringValidationMessage} from "../../common/validation-message/string-validation.message";
+import { IsString } from 'class-validator';
+import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
 
 @Entity()
 export class PostModel extends BaseModel {
@@ -22,6 +22,11 @@ export class PostModel extends BaseModel {
     message: stringValidationMessage,
   })
   content: string;
+
+  @Column({
+    nullable: true,
+  })
+  image?: string;
 
   @Column()
   likeCount: number;
