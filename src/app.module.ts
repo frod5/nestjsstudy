@@ -48,6 +48,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
         UsersModel,
       ],
       synchronize: true, // 개발환경에서만 true
+      logging: true,
     }),
     StudyModule,
     UsersModule,

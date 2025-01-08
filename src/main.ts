@@ -10,6 +10,8 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true, // class-transformer가 타입변환까지 해준다.
       },
+      whitelist: true,
+      forbidNonWhitelisted: true,
     }),
   );
   await app.listen(process.env.PORT ?? 3000);
