@@ -29,8 +29,35 @@ export class PostsService {
     }
   }
 
-  // 1) 오름차순 정렬하는 pagination만 구현
   async paginatePosts(query: PaginatePostDto) {
+    if (query.page) {
+      return this.pagePaginatePosts(query);
+    } else {
+      return this.cursiorPaginatePosts(query);
+    }
+  }
+
+  async pagePaginatePosts(query: PaginatePostDto) {
+    /**
+     * data: Data[],
+     * total: number,
+     */
+    const [result, total] = await this.postsRepository.findAndCount({
+      skip: query.take * (query.page - 1),
+      take: query.take,
+      order: {
+        createdAt: query.order__createdAt,
+      },
+    });
+
+    return {
+      data: result,
+      total: total,
+    };
+  }
+
+  // 1) 오름차순 정렬하는 pagination만 구현
+  async cursiorPaginatePosts(query: PaginatePostDto) {
     const where: FindOptionsWhere<PostModel> = {};
 
     if (query.where__id_less_than) {
