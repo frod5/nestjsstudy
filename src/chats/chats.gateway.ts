@@ -14,6 +14,7 @@ import { ChatsService } from './chats.service';
 import { EnterChatDto } from './dto/enter-chat.dto';
 import { CreateMessagesDto } from './messages/dto/create-messages.dto';
 import { ChatMessagesService } from './messages/messages.service';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 
 @WebSocketGateway({
   // ws://localhost:3000/chats
@@ -32,6 +33,17 @@ export class ChatsGateway implements OnGatewayConnection {
     console.log(`on connect called: ${socket.id}`);
   }
 
+  //main.ts에 글로벌 pipe는 지금은 http 컨트롤러에만 적용된다.
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // class-transformer가 타입변환까지 해준다.
+      },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
   @SubscribeMessage('create_chat')
   async createChat(
     @MessageBody() data: CreateChatDto,
@@ -56,7 +68,9 @@ export class ChatsGateway implements OnGatewayConnection {
 
     const message = await this.messagesService.createMessage(dto);
     //broadcast
-    socket.to(message.chat.id.toString()).emit('receive_message', message.message);
+    socket
+      .to(message.chat.id.toString())
+      .emit('receive_message', message.message);
     // this.server
     //   .in(message.chatId.toString())
     //   .emit('receive_message', message.message);
