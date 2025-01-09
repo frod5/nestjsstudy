@@ -14,7 +14,8 @@ import { ChatsService } from './chats.service';
 import { EnterChatDto } from './dto/enter-chat.dto';
 import { CreateMessagesDto } from './messages/dto/create-messages.dto';
 import { ChatMessagesService } from './messages/messages.service';
-import { UsePipes, ValidationPipe } from '@nestjs/common';
+import {UseFilters, UsePipes, ValidationPipe} from '@nestjs/common';
+import {SocketCatchHttpExceptionFilter} from "../common/filter/socket-catch-http.exception-filter";
 
 @WebSocketGateway({
   // ws://localhost:3000/chats
@@ -44,6 +45,7 @@ export class ChatsGateway implements OnGatewayConnection {
       forbidNonWhitelisted: true,
     }),
   )
+  @UseFilters(SocketCatchHttpExceptionFilter )
   @SubscribeMessage('create_chat')
   async createChat(
     @MessageBody() data: CreateChatDto,
