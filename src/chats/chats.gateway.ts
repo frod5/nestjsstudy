@@ -27,9 +27,13 @@ export class ChatsGateway implements OnGatewayConnection {
     @MessageBody() message: { message: string; chatId: number },
     @ConnectedSocket() socket: Socket,
   ) {
-    this.server
-      .in(message.chatId.toString())
+    //broadcast
+    socket
+      .to(message.chatId.toString())
       .emit('receive_message', message.message);
+    // this.server
+    //   .in(message.chatId.toString())
+    //   .emit('receive_message', message.message);
   }
 
   @SubscribeMessage('enter_chat')
