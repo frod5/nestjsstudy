@@ -1,20 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostModel } from './entities/posts.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { CommonService } from '../common/common.service';
-import { basename, join } from 'path';
-import { POST_IMAGE_PATH, TEMP_FOLDER_PATH } from '../common/const/path.const';
-import { promises } from 'fs';
-import { CreatePostImageDto } from './image/dto/create-image.dto';
-import { ImageModel } from '../common/entities/image.entity';
 import { DEFAULT_POST_FIND_OPTIONS } from './const/default-post-find-options.const';
 
 @Injectable()
@@ -22,8 +13,6 @@ export class PostsService {
   constructor(
     @InjectRepository(PostModel)
     private readonly postsRepository: Repository<PostModel>,
-    @InjectRepository(ImageModel)
-    private readonly imageRepository: Repository<ImageModel>,
     private readonly commonService: CommonService,
   ) {}
 
@@ -65,38 +54,17 @@ export class PostsService {
     return post;
   }
 
-  async createPostImage(dto: CreatePostImageDto) {
-    const result = await this.imageRepository.save({
-      ...dto,
-    });
-
-    //dto의 이미지 이름을 기반으로
-    //파일의 경로를 생성한다.
-    const tempFilePath = join(TEMP_FOLDER_PATH, dto.path);
-
-    try {
-      //파일이 존재하는지 확인
-      await promises.access(tempFilePath);
-    } catch (e) {
-      throw new BadRequestException('존재하지 않는 파일입니다.');
-    }
-
-    //파일 이름만 가져오기
-    const fileName = basename(tempFilePath);
-
-    //새로 이동할 포스트 폴더의 경로
-    // /{프로젝트의 위치}/public/posts
-    const newPath = join(POST_IMAGE_PATH, fileName);
-
-    //파일 옮기기
-    await promises.rename(tempFilePath, newPath);
-    return result;
+  getRepository(qr?: QueryRunner) {
+    return qr
+      ? qr.manager.getRepository<PostModel>(PostModel)
+      : this.postsRepository;
   }
 
-  async createPost(authorId: number, postDto: CreatePostDto) {
+  async createPost(authorId: number, postDto: CreatePostDto, qr?: QueryRunner) {
     //1) create - 객체 생성
     //2) save - 객체 저장
-    const post = this.postsRepository.create({
+    const repository = this.getRepository(qr);
+    const post = repository.create({
       author: {
         id: authorId,
       },
@@ -106,7 +74,7 @@ export class PostsService {
       commentCount: 0,
     });
 
-    return await this.postsRepository.save(post);
+    return await repository.save(post);
   }
 
   async updatePost(id: number, updatePostDto: UpdatePostDto) {
