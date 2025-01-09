@@ -9,7 +9,8 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards, UseInterceptors,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/baerer-token';
@@ -18,9 +19,11 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { ImageType } from '../common/entities/image.entity';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner as QR } from 'typeorm';
 import { PostImagesService } from './image/image.service';
-import {LogIntercepter} from "../common/intercepter/log.intercepter";
+import { LogIntercepter } from '../common/intercepter/log.intercepter';
+import { TransacionInterceptor } from '../common/intercepter/transaction.interception';
+import { QueryRunner } from '../common/decorator/query-runner.decorator';
 
 /**
  * 모듈 생성 nest-cli
@@ -50,49 +53,27 @@ export class PostsController {
 
   //3) Post
   @Post()
+  @UseInterceptors(TransacionInterceptor)
   @UseGuards(AccessTokenGuard)
   async postPost(
     @User('id') userId: number,
+    @QueryRunner() qr: QR,
     @Body() createPostDto: CreatePostDto,
   ) {
-    //트랜잭션과 관련되 모든 쿼리를 담당할
-    // 쿼리 러너 생성
-    const qr = this.dataSource.createQueryRunner();
-
-    //쿼리 러너 연결
-    await qr.connect();
-    // 쿼리 러너에서 트랜잭션 시작
-    // 이 시점부터 같은 쿼리 러너를 사용하면
-    // 트랜잭션 안에서 데이터베이스 액션을 실행할 수 있다.
-    await qr.startTransaction();
-
     //로직 실행
-    try {
-      const post = await this.postsService.createPost(
-        userId,
-        createPostDto,
+    const post = await this.postsService.createPost(userId, createPostDto, qr);
+    for (let i = 0; i < createPostDto.images.length; i++) {
+      await this.postImagesService.createPostImage(
+        {
+          post: post,
+          order: i,
+          path: createPostDto.images[i],
+          type: ImageType.POST_IMAGE,
+        },
         qr,
       );
-      for (let i = 0; i < createPostDto.images.length; i++) {
-        await this.postImagesService.createPostImage(
-          {
-            post: post,
-            order: i,
-            path: createPostDto.images[i],
-            type: ImageType.POST_IMAGE,
-          },
-          qr,
-        );
-      }
-
-      //커밋
-      await qr.commitTransaction();
-      await qr.release();
-      return this.postsService.getPostById(post.id);
-    } catch (e) {
-      await qr.rollbackTransaction();
-      await qr.release();
     }
+    return this.postsService.getPostById(post.id, qr);
   }
 
   //temp
