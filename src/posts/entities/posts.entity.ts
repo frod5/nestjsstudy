@@ -5,7 +5,7 @@ import { IsString } from 'class-validator';
 import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
 import { Transform } from 'class-transformer';
 import { join } from 'path';
-import {POST_IMAGE_PATH, POST_PUBLIC_PATH} from '../../common/const/path.const';
+import { POST_PUBLIC_PATH } from '../../common/const/path.const';
 
 @Entity()
 export class PostModel extends BaseModel {
