@@ -33,6 +33,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
 import { ImageModel } from './common/entities/image.entity';
 import { ChatsModule } from './chats/chats.module';
+import { ChatsModel } from './chats/entities/chats.entity';
+import { MessagesModel } from './chats/messages/entities/messages.entity';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { ChatsModule } from './chats/chats.module';
         TagModel,
         UsersModel,
         ImageModel,
+        ChatsModel,
+        MessagesModel,
       ],
       synchronize: true, // 개발환경에서만 true
       // logging: true,
