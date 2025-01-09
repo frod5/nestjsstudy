@@ -4,10 +4,10 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { map, observable, Observable, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
-export class LogIntercepter implements NestInterceptor {
+export class LogInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,

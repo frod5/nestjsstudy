@@ -21,8 +21,8 @@ import { PaginatePostDto } from './dto/paginate-post.dto';
 import { ImageType } from '../common/entities/image.entity';
 import { DataSource, QueryRunner as QR } from 'typeorm';
 import { PostImagesService } from './image/image.service';
-import { LogIntercepter } from '../common/intercepter/log.intercepter';
-import { TransacionInterceptor } from '../common/intercepter/transaction.interception';
+import { LogInterceptor } from '../common/interceptor/log.interceptor';
+import { TransacionInterceptor } from '../common/interceptor/transaction.interceptor';
 import { QueryRunner } from '../common/decorator/query-runner.decorator';
 
 /**
@@ -40,7 +40,7 @@ export class PostsController {
 
   //1) Get 모든 posts 조회
   @Get()
-  @UseInterceptors(LogIntercepter)
+  @UseInterceptors(LogInterceptor)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }
