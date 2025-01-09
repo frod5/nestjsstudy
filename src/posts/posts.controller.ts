@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
+  UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from '../auth/guard/baerer-token';
@@ -20,6 +20,7 @@ import { PaginatePostDto } from './dto/paginate-post.dto';
 import { ImageType } from '../common/entities/image.entity';
 import { DataSource } from 'typeorm';
 import { PostImagesService } from './image/image.service';
+import {LogIntercepter} from "../common/intercepter/log.intercepter";
 
 /**
  * 모듈 생성 nest-cli
@@ -36,6 +37,7 @@ export class PostsController {
 
   //1) Get 모든 posts 조회
   @Get()
+  @UseInterceptors(LogIntercepter)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }

@@ -64,7 +64,7 @@ import { ImageModel } from './common/entities/image.entity';
         ImageModel,
       ],
       synchronize: true, // 개발환경에서만 true
-      logging: true,
+      // logging: true,
     }),
     StudyModule,
     UsersModule,
