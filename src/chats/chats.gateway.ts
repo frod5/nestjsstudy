@@ -9,20 +9,15 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { CreateChatDto } from './dto/create-chat.dto';
-import * as console from 'node:console';
 import { ChatsService } from './chats.service';
 import { EnterChatDto } from './dto/enter-chat.dto';
 import { CreateMessagesDto } from './messages/dto/create-messages.dto';
 import { ChatMessagesService } from './messages/messages.service';
-import {
-  UseFilters,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SocketCatchHttpExceptionFilter } from '../common/filter/socket-catch-http.exception-filter';
-import { SocketBaererTokenGuard } from '../auth/guard/socket/socket-baerer-token.guard';
 import { UsersModel } from '../users/entities/users.entity';
+import { UsersService } from '../users/users.service';
+import { AuthService } from '../auth/auth.service';
 
 @WebSocketGateway({
   // ws://localhost:3000/chats
@@ -32,13 +27,30 @@ export class ChatsGateway implements OnGatewayConnection {
   constructor(
     private readonly chatService: ChatsService,
     private readonly messagesService: ChatMessagesService,
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
   ) {}
 
   @WebSocketServer()
   server: Server;
 
-  handleConnection(socket: Socket) {
-    console.log(`on connect called: ${socket.id}`);
+  async handleConnection(socket: Socket & { user: UsersModel }) {
+    const headers = socket.handshake.headers;
+    const rawToken = headers['authorization'];
+
+    if (!rawToken) {
+      socket.disconnect();
+    }
+
+    try {
+      const token = this.authService.extractTokenFromHeader(rawToken, true);
+      const payload = this.authService.verifyToken(token);
+      const user = await this.usersService.getUserByEmail(payload.email);
+      socket.user = user;
+      return true;
+    } catch (error) {
+      socket.disconnect();
+    }
   }
 
   //main.ts에 글로벌 pipe는 지금은 http 컨트롤러에만 적용된다.
@@ -53,7 +65,6 @@ export class ChatsGateway implements OnGatewayConnection {
     }),
   )
   @UseFilters(SocketCatchHttpExceptionFilter)
-  @UseGuards(SocketBaererTokenGuard)
   @SubscribeMessage('create_chat')
   async createChat(
     @MessageBody() data: CreateChatDto,
@@ -64,10 +75,21 @@ export class ChatsGateway implements OnGatewayConnection {
 
   // 클래식은
   // socket.on('send_message', (message) => {console.log(message)});
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // class-transformer가 타입변환까지 해준다.
+      },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  @UseFilters(SocketCatchHttpExceptionFilter)
   @SubscribeMessage('send_message')
   async sendMessage(
     @MessageBody() dto: CreateMessagesDto,
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: Socket & { user: UsersModel },
   ) {
     if (!(await this.chatService.checkIfChatExists(dto.chatId))) {
       throw new WsException({
@@ -76,7 +98,10 @@ export class ChatsGateway implements OnGatewayConnection {
       });
     }
 
-    const message = await this.messagesService.createMessage(dto);
+    const message = await this.messagesService.createMessage(
+      dto,
+      socket.user.id,
+    );
     //broadcast
     socket
       .to(message.chat.id.toString())
@@ -86,11 +111,22 @@ export class ChatsGateway implements OnGatewayConnection {
     //   .emit('receive_message', message.message);
   }
 
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // class-transformer가 타입변환까지 해준다.
+      },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  @UseFilters(SocketCatchHttpExceptionFilter)
   @SubscribeMessage('enter_chat')
   async enterChat(
     //방의 ID를 리스트로받는다.
     @MessageBody() data: EnterChatDto,
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: Socket & { user: UsersModel },
   ) {
     for (const chatId of data.chatIds) {
       if (!(await this.chatService.checkIfChatExists(chatId))) {
