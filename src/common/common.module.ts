@@ -8,17 +8,11 @@ import { TEMP_FOLDER_PATH } from './const/path.const';
 import { v4 as uuid } from 'uuid';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
-import { UsersService } from '../users/users.service';
-import { AuthService } from '../auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModel } from '../users/entities/users.entity';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
-    TypeOrmModule.forFeature([UsersModel]),
     MulterModule.register({
       limits: {
         fileSize: 10 * 1024 * 1024,
@@ -49,6 +43,6 @@ import { UsersModel } from '../users/entities/users.entity';
   ],
   controllers: [CommonController],
   exports: [CommonService],
-  providers: [CommonService, AuthService, UsersService, JwtService],
+  providers: [CommonService],
 })
 export class CommonModule {}
