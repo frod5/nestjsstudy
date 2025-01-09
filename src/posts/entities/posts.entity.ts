@@ -3,6 +3,9 @@ import { UsersModel } from '../../users/entities/users.entity';
 import { BaseModel } from '../../study/entities/inheritance.entity';
 import { IsString } from 'class-validator';
 import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
+import { Transform } from 'class-transformer';
+import { join } from 'path';
+import {POST_IMAGE_PATH, POST_PUBLIC_PATH} from '../../common/const/path.const';
 
 @Entity()
 export class PostModel extends BaseModel {
@@ -26,6 +29,7 @@ export class PostModel extends BaseModel {
   @Column({
     nullable: true,
   })
+  @Transform(({ value }) => value && `/${join(POST_PUBLIC_PATH, value)}`)
   image?: string;
 
   @Column()
