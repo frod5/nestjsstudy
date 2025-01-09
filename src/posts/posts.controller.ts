@@ -19,7 +19,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { ImageType } from '../common/entities/image.entity';
-import { DataSource, QueryRunner as QR } from 'typeorm';
+import { QueryRunner as QR } from 'typeorm';
 import { PostImagesService } from './image/image.service';
 import { LogInterceptor } from '../common/interceptor/log.interceptor';
 import { TransacionInterceptor } from '../common/interceptor/transaction.interceptor';
@@ -35,12 +35,12 @@ export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly postImagesService: PostImagesService,
-    private readonly dataSource: DataSource,
   ) {}
 
   //1) Get 모든 posts 조회
   @Get()
   @UseInterceptors(LogInterceptor)
+  // @UseFilters(HttpExceptionFilter)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }
