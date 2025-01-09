@@ -27,7 +27,7 @@ export class TransacionInterceptor implements NestInterceptor {
     // 트랜잭션 안에서 데이터베이스 액션을 실행할 수 있다.
     await qr.startTransaction();
     const req = context.switchToHttp().getRequest();
-    req.queryRuuner = qr;
+    req.queryRunner = qr;
     return next.handle().pipe(
       tap(async () => {
         await qr.commitTransaction();
