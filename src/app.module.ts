@@ -30,7 +30,8 @@ import {
   ENV_DB_USERNAME_KEY,
 } from './common/const/env-keys.const';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import {PUBLIC_FOLDER_PATH} from "./common/const/path.const";
+import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
+import { ImageModel } from './common/entities/image.entity';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import {PUBLIC_FOLDER_PATH} from "./common/const/path.const";
         ProfileModel,
         TagModel,
         UsersModel,
+        ImageModel,
       ],
       synchronize: true, // 개발환경에서만 true
       logging: true,

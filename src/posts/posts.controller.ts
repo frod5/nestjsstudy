@@ -17,6 +17,7 @@ import { User } from '../users/decorator/user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
+import { ImageType } from '../common/entities/image.entity';
 
 /**
  * 모듈 생성 nest-cli
@@ -42,9 +43,19 @@ export class PostsController {
   //3) Post
   @Post()
   @UseGuards(AccessTokenGuard)
-  async postPost(@User('id') userId: number, @Body() createPostDto: CreatePostDto) {
-    await this.postsService.createPostImage(createPostDto);
-    return this.postsService.createPost(userId, createPostDto);
+  async postPost(
+    @User('id') userId: number,
+    @Body() createPostDto: CreatePostDto,
+  ) {
+    const post = await this.postsService.createPost(userId, createPostDto);
+    for (let i = 0; i < createPostDto.images.length; i++) {
+      await this.postsService.createPostImage({
+        post: post,
+        order: i,
+        path: createPostDto.images[i],
+        type: ImageType.POST_IMAGE,
+      });
+    }
   }
 
   //temp

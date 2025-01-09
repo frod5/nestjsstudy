@@ -1,11 +1,9 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { UsersModel } from '../../users/entities/users.entity';
 import { BaseModel } from '../../study/entities/inheritance.entity';
 import { IsString } from 'class-validator';
 import { stringValidationMessage } from '../../common/validation-message/string-validation.message';
-import { Transform } from 'class-transformer';
-import { join } from 'path';
-import { POST_PUBLIC_PATH } from '../../common/const/path.const';
+import { ImageModel } from '../../common/entities/image.entity';
 
 @Entity()
 export class PostModel extends BaseModel {
@@ -26,11 +24,8 @@ export class PostModel extends BaseModel {
   })
   content: string;
 
-  @Column({
-    nullable: true,
-  })
-  @Transform(({ value }) => value && `/${join(POST_PUBLIC_PATH, value)}`)
-  image?: string;
+  @OneToMany((type) => ImageModel, (image) => image.post)
+  images: ImageModel[];
 
   @Column()
   likeCount: number;
