@@ -35,6 +35,8 @@ import { ImageModel } from './common/entities/image.entity';
 import { ChatsModule } from './chats/chats.module';
 import { ChatsModel } from './chats/entities/chats.entity';
 import { MessagesModel } from './chats/messages/entities/messages.entity';
+import { CommentsModule } from './posts/comments/comments.module';
+import { CommentModel } from './posts/comments/entities/comment.entity';
 
 @Module({
   imports: [
@@ -67,6 +69,7 @@ import { MessagesModel } from './chats/messages/entities/messages.entity';
         ImageModel,
         ChatsModel,
         MessagesModel,
+        CommentModel,
       ],
       synchronize: true, // 개발환경에서만 true
       // logging: true,
@@ -81,6 +84,7 @@ import { MessagesModel } from './chats/messages/entities/messages.entity';
       serveRoot: '/public',
     }),
     ChatsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [

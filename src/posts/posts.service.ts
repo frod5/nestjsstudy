@@ -94,4 +94,8 @@ export class PostsService {
     await this.postsRepository.delete(id);
     return id;
   }
+
+  async checkExistsPosts(id: number) {
+    return await this.postsRepository.exists({ where: { id } });
+  }
 }
