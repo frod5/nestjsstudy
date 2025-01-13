@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersModel } from './entities/users.entity';
@@ -19,7 +19,7 @@ export class UsersService {
       },
     });
 
-    if(nicknameExists) {
+    if (nicknameExists) {
       throw new BadRequestException('User with nickname already exists');
     }
 
@@ -29,7 +29,7 @@ export class UsersService {
       },
     });
 
-    if(emailExists) {
+    if (emailExists) {
       throw new BadRequestException('User with email already exists');
     }
 
@@ -50,5 +50,39 @@ export class UsersService {
     return await this.usersRepository.findOne({
       where: { email },
     });
+  }
+
+  async followUser(followerId: number, foloweeId: number) {
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: followerId,
+      },
+      relations: ['followees'],
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    await this.usersRepository.save({
+      ...user,
+      followees: [
+        ...user.followees,
+        {
+          id: foloweeId,
+        },
+      ],
+    });
+  }
+
+  async getFollowers(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['followers'],
+    });
+
+    return user.followers;
   }
 }

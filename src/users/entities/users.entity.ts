@@ -1,4 +1,4 @@
-import {Column, Entity, JoinTable, ManyToMany, OneToMany} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 import { PostModel } from '../../posts/entities/posts.entity';
 import { BaseModel } from '../../study/entities/inheritance.entity';
@@ -8,8 +8,8 @@ import { stringValidationMessage } from '../../common/validation-message/string-
 import { emailValidationMessage } from '../../common/validation-message/email-validation.message';
 import { Exclude } from 'class-transformer';
 import { ChatsModel } from '../../chats/entities/chats.entity';
-import {MessagesModel} from "../../chats/messages/entities/messages.entity";
-import {CommentModel} from "../../posts/comments/entities/comment.entity";
+import { MessagesModel } from '../../chats/messages/entities/messages.entity';
+import { CommentModel } from '../../posts/comments/entities/comment.entity';
 
 @Entity()
 // @Exclude()
@@ -80,4 +80,13 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => CommentModel, (comment) => comment.author)
   comments: CommentModel[];
+
+  // 내가 팔로우하고 있는 사람들
+  @ManyToMany(() => UsersModel, (user) => user.followees)
+  @JoinTable()
+  followers: UsersModel[];
+
+  // 나를 팔로우 하고 있는 사람들
+  @ManyToMany(() => UsersModel, (user) => user.followers)
+  followees: UsersModel[];
 }
