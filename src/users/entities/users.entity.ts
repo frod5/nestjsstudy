@@ -10,7 +10,7 @@ import { Exclude } from 'class-transformer';
 import { ChatsModel } from '../../chats/entities/chats.entity';
 import { MessagesModel } from '../../chats/messages/entities/messages.entity';
 import { CommentModel } from '../../posts/comments/entities/comment.entity';
-import {UserFollowersModel} from "./user-followers.entity";
+import { UserFollowersModel } from './user-followers.entity';
 
 @Entity()
 // @Exclude()
@@ -91,4 +91,14 @@ export class UsersModel extends BaseModel {
   // 나를 팔로우 하고 있는 사람들
   @ManyToMany(() => UserFollowersModel, (user) => user.followee)
   followees: UserFollowersModel[];
+
+  @Column({
+    default: 0,
+  })
+  followerCount: number;
+
+  @Column({
+    default: 0,
+  })
+  followeeCount: number;
 }

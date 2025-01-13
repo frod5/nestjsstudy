@@ -21,11 +21,15 @@ import { QueryRunner } from '../../common/decorator/query-runner.decorator';
 import { UpdateCommentsDto } from './dto/update-comments.dto';
 import { QueryRunner as QR } from 'typeorm';
 import { IsPublic } from '../../common/decorator/is-public.decorator';
-import {IsCommentMineOrAdminGuard} from "./guard/is-comment-mine-or-admin.guard";
+import { IsCommentMineOrAdminGuard } from './guard/is-comment-mine-or-admin.guard';
+import { PostsService } from '../posts.service';
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly commentsService: CommentsService,
+    private readonly postsService: PostsService,
+  ) {}
 
   @Get()
   @IsPublic()
@@ -50,7 +54,14 @@ export class CommentsController {
     @Param('postId', ParseIntPipe) postId: number,
     @QueryRunner() qr?: QR,
   ) {
-    return this.commentsService.createComment(dto, userId, postId, qr);
+    const res = await this.commentsService.createComment(
+      dto,
+      userId,
+      postId,
+      qr,
+    );
+    await this.postsService.incrementCommentCount(postId, qr);
+    return res;
   }
 
   @Patch(':commentId')
@@ -74,7 +85,14 @@ export class CommentsController {
 
   @Delete(':commentId')
   @UseGuards(IsCommentMineOrAdminGuard)
-  async deleteComment(@Param('commentId', ParseIntPipe) commentId: number) {
-    return this.commentsService.deleteComment(commentId);
+  @UseInterceptors(TransacionInterceptor)
+  async deleteComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @QueryRunner() qr?: QR,
+  ) {
+    const res = await this.commentsService.deleteComment(commentId);
+    await this.postsService.decrementCommentCount(postId, qr);
+    return res;
   }
 }
