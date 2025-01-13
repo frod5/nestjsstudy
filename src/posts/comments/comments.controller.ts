@@ -20,12 +20,14 @@ import { TransacionInterceptor } from '../../common/interceptor/transaction.inte
 import { QueryRunner } from '../../common/decorator/query-runner.decorator';
 import { UpdateCommentsDto } from './dto/update-comments.dto';
 import { QueryRunner as QR } from 'typeorm';
+import { IsPublic } from '../../common/decorator/is-public.decorator';
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Get()
+  @IsPublic()
   pagenatedComments(
     @Query() dto: PaginateCommentsDto,
     @Param('postId', ParseIntPipe) postId: number,
@@ -34,13 +36,13 @@ export class CommentsController {
   }
 
   @Get(':commentId')
+  @IsPublic()
   getComment(@Param('commentId', ParseIntPipe) commentId: number) {
     return this.commentsService.getCommentById(commentId);
   }
 
   @Post()
   @UseInterceptors(TransacionInterceptor)
-  @UseGuards(AccessTokenGuard)
   async createComment(
     @Body() dto: CreateCommentsDto,
     @User('id') userId: number,
@@ -52,7 +54,6 @@ export class CommentsController {
 
   @Patch(':commentId')
   @UseInterceptors(TransacionInterceptor)
-  @UseGuards(AccessTokenGuard)
   async patchComment(
     @Body() dto: UpdateCommentsDto,
     @User('id') userId: number,
@@ -70,7 +71,6 @@ export class CommentsController {
   }
 
   @Delete(':commentId')
-  @UseGuards(AccessTokenGuard)
   async deleteComment(@Param('commentId', ParseIntPipe) commentId: number) {
     return this.commentsService.deleteComment(commentId);
   }

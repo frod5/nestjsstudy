@@ -24,6 +24,9 @@ import { PostImagesService } from './image/image.service';
 import { LogInterceptor } from '../common/interceptor/log.interceptor';
 import { TransacionInterceptor } from '../common/interceptor/transaction.interceptor';
 import { QueryRunner } from '../common/decorator/query-runner.decorator';
+import {RolesEnum} from "../users/const/roles.const";
+import {Roles} from "../users/decorator/role.decorator";
+import {IsPublic} from "../common/decorator/is-public.decorator";
 
 /**
  * 모듈 생성 nest-cli
@@ -40,6 +43,7 @@ export class PostsController {
   //1) Get 모든 posts 조회
   @Get()
   @UseInterceptors(LogInterceptor)
+  @IsPublic()
   // @UseFilters(HttpExceptionFilter)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
@@ -47,6 +51,7 @@ export class PostsController {
 
   //2) Get/:id 단 건 조회
   @Get(':id')
+  @IsPublic()
   getPost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.getPostById(id);
   }
@@ -54,7 +59,6 @@ export class PostsController {
   //3) Post
   @Post()
   @UseInterceptors(TransacionInterceptor)
-  @UseGuards(AccessTokenGuard)
   async postPost(
     @User('id') userId: number,
     @QueryRunner() qr: QR,
@@ -78,7 +82,6 @@ export class PostsController {
 
   //temp
   @Post('random')
-  @UseGuards(AccessTokenGuard)
   async postPostsRandom(@User('id') userId: number) {
     await this.postsService.generatePosts(userId);
     return true;
@@ -96,6 +99,7 @@ export class PostsController {
 
   //5) delete
   @Delete(':id')
+  @Roles(RolesEnum.ADMIN)
   deletePost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.deletePost(id);
   }
