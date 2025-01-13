@@ -2,12 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersModel } from './entities/users.entity';
+import { UserFollowersModel } from './entities/user-followers.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersModel)
     private readonly usersRepository: Repository<UsersModel>,
+    @InjectRepository(UserFollowersModel)
+    private readonly userFollowersRepository: Repository<UserFollowersModel>,
   ) {}
 
   async createUser(user: Pick<UsersModel, 'nickname' | 'email' | 'password'>) {
@@ -53,36 +56,27 @@ export class UsersService {
   }
 
   async followUser(followerId: number, foloweeId: number) {
-    const user = await this.usersRepository.findOne({
-      where: {
-        id: followerId,
-      },
-      relations: ['followees'],
+    await this.userFollowersRepository.save({
+      follower: { id: followerId },
+      followee: { id: foloweeId },
     });
 
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    await this.usersRepository.save({
-      ...user,
-      followees: [
-        ...user.followees,
-        {
-          id: foloweeId,
-        },
-      ],
-    });
+    return true;
   }
 
   async getFollowers(userId: number) {
-    const user = await this.usersRepository.findOne({
+    const result = await this.userFollowersRepository.find({
       where: {
-        id: userId,
+        followee: {
+          id: userId,
+        },
       },
-      relations: ['followers'],
+      relations: {
+        follower: true,
+        followee: true,
+      },
     });
 
-    return user.followers;
+    return result.map((x) => x.follower);
   }
 }

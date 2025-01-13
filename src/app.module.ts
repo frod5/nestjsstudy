@@ -38,7 +38,8 @@ import { MessagesModel } from './chats/messages/entities/messages.entity';
 import { CommentsModule } from './posts/comments/comments.module';
 import { CommentModel } from './posts/comments/entities/comment.entity';
 import { RolesGuard } from './users/guard/roles.guard';
-import {AccessTokenGuard} from "./auth/guard/baerer-token.guard";
+import { AccessTokenGuard } from './auth/guard/baerer-token.guard';
+import { UserFollowersModel } from './users/entities/user-followers.entity';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import {AccessTokenGuard} from "./auth/guard/baerer-token.guard";
         ChatsModel,
         MessagesModel,
         CommentModel,
+        UserFollowersModel,
       ],
       synchronize: true, // 개발환경에서만 true
       // logging: true,
