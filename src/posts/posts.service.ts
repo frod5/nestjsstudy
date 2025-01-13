@@ -98,4 +98,16 @@ export class PostsService {
   async checkExistsPosts(id: number) {
     return await this.postsRepository.exists({ where: { id } });
   }
+
+  async isPostMine(userId: number, postId: number) {
+    return await this.postsRepository.exists({
+      where: {
+        id: postId,
+        author: {
+          id: userId,
+        },
+      },
+      relations: ['author'],
+    });
+  }
 }

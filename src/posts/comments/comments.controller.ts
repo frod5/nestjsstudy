@@ -21,6 +21,7 @@ import { QueryRunner } from '../../common/decorator/query-runner.decorator';
 import { UpdateCommentsDto } from './dto/update-comments.dto';
 import { QueryRunner as QR } from 'typeorm';
 import { IsPublic } from '../../common/decorator/is-public.decorator';
+import {IsCommentMineOrAdminGuard} from "./guard/is-comment-mine-or-admin.guard";
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
@@ -54,6 +55,7 @@ export class CommentsController {
 
   @Patch(':commentId')
   @UseInterceptors(TransacionInterceptor)
+  @UseGuards(IsCommentMineOrAdminGuard)
   async patchComment(
     @Body() dto: UpdateCommentsDto,
     @User('id') userId: number,
@@ -71,6 +73,7 @@ export class CommentsController {
   }
 
   @Delete(':commentId')
+  @UseGuards(IsCommentMineOrAdminGuard)
   async deleteComment(@Param('commentId', ParseIntPipe) commentId: number) {
     return this.commentsService.deleteComment(commentId);
   }

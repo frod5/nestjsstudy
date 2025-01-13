@@ -12,21 +12,21 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { AccessTokenGuard } from '../auth/guard/baerer-token.guard';
-import { User } from '../users/decorator/user.decorator';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PaginatePostDto } from './dto/paginate-post.dto';
-import { ImageType } from '../common/entities/image.entity';
-import { QueryRunner as QR } from 'typeorm';
-import { PostImagesService } from './image/image.service';
-import { LogInterceptor } from '../common/interceptor/log.interceptor';
-import { TransacionInterceptor } from '../common/interceptor/transaction.interceptor';
-import { QueryRunner } from '../common/decorator/query-runner.decorator';
+import {PostsService} from './posts.service';
+import {User} from '../users/decorator/user.decorator';
+import {CreatePostDto} from './dto/create-post.dto';
+import {UpdatePostDto} from './dto/update-post.dto';
+import {PaginatePostDto} from './dto/paginate-post.dto';
+import {ImageType} from '../common/entities/image.entity';
+import {QueryRunner as QR} from 'typeorm';
+import {PostImagesService} from './image/image.service';
+import {LogInterceptor} from '../common/interceptor/log.interceptor';
+import {TransacionInterceptor} from '../common/interceptor/transaction.interceptor';
+import {QueryRunner} from '../common/decorator/query-runner.decorator';
 import {RolesEnum} from "../users/const/roles.const";
 import {Roles} from "../users/decorator/role.decorator";
 import {IsPublic} from "../common/decorator/is-public.decorator";
+import {IsPostMineOrAdminGuard} from "./guard/is-post-mine-or-admin.guard";
 
 /**
  * 모듈 생성 nest-cli
@@ -88,9 +88,10 @@ export class PostsController {
   }
 
   //4) Put
-  @Patch(':id')
+  @Patch(':postId')
+  @UseGuards(IsPostMineOrAdminGuard)
   patchPost(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('postId', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
     @Body('isPublic', new DefaultValuePipe(true)) isPublic?: boolean, // new 로 인스턴스화 하면 계속 객체생성됨.
   ) {
